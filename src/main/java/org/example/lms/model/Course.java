@@ -1,0 +1,31 @@
+package org.example.lms.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
+
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = "courses")
+public class Course {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
+    @Setter
+    @Column(name = "name")
+    private String courseName;
+
+    @Setter
+    @Column(name = "description")
+    private String courseDescription;
+
+    @OneToMany(mappedBy = "course")
+    private Set<Schedule> schedules = new HashSet<>();
+}

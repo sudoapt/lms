@@ -1,3 +1,12 @@
 spring:
   application:
     name: lms
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.sql: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
