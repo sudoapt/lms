@@ -8,10 +8,7 @@ import org.example.lms.dto.GroupDto;
 import org.example.lms.service.GroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +22,15 @@ public class GroupController {
     public ResponseEntity<GroupDto> createGroup(@Valid @RequestBody GroupDto groupDto) {
        GroupDto createdGroup =  groupService.createGroup(groupDto);
        return ResponseEntity.status(HttpStatus.CREATED).body(createdGroup);
+    }
+
+    @PutMapping("/{groupId}/courses/{courseId}")
+    @Operation(summary = "Assign group on a course")
+    public ResponseEntity<Void> assignGroupOnCourse(
+            @PathVariable Long groupId,
+            @PathVariable Long courseId
+    ) {
+        groupService.assignGroupOnCourse(groupId, courseId);
+        return ResponseEntity.noContent().build();
     }
 }

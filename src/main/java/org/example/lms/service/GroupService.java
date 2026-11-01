@@ -1,10 +1,13 @@
 package org.example.lms.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.GroupDto;
 import org.example.lms.exception.AlreadyExistsException;
 import org.example.lms.mapper.GroupMapper;
+import org.example.lms.model.Course;
 import org.example.lms.model.Group;
+import org.example.lms.repository.CourseRepository;
 import org.example.lms.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class GroupService {
     private final GroupRepository groupRepository;
+    private final CourseRepository courseRepository;
     private final GroupMapper groupMapper;
 
     @Transactional
@@ -25,5 +29,16 @@ public class GroupService {
         Group group = groupMapper.toGroupEntity(groupDto);
         Group newGroup = groupRepository.save(group); // SDJPA executes insert/update
         return groupMapper.toGroupDto(newGroup);
+    }
+
+    @Transactional
+    public void assignGroupOnCourse(Long groupId, Long courseId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("No course with the id: " + courseId + " found"));
+
+        course.getGroups().add(group);
+        group.getCourses().add(course);
     }
 }
