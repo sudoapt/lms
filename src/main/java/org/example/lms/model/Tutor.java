@@ -2,6 +2,7 @@ package org.example.lms.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,10 @@ public class Tutor {
 
     @OneToMany(mappedBy = "tutor")
     private Set<Schedule> schedules = new HashSet<>();
+
+    @Setter
+    @OneToMany(mappedBy = "tutor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    private Set<Course> courses = new HashSet<>();
 
 
 }

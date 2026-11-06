@@ -2,16 +2,16 @@ package org.example.lms.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
+@ToString(exclude = {"tutor", "course", "group"})
+@EqualsAndHashCode(exclude = {"tutor", "course", "group"}) // exclude from fetching
 @Entity
 @Table(name = "schedule")
 public class Schedule {
@@ -20,12 +20,11 @@ public class Schedule {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY) // many schedules can have the same tutor
     @JoinColumn(name = "tutor_id")
     private Tutor tutor;
 
-    @Setter
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
@@ -34,11 +33,10 @@ public class Schedule {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @Setter
+
     @Column(name = "start_date")
     private LocalDateTime startDate;
 
-    @Setter
     @Column(name = "end_date")
     private LocalDateTime endDate;
 

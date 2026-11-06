@@ -27,8 +27,29 @@ public class GroupService {
         }
 
         Group group = groupMapper.toGroupEntity(groupDto);
-        Group newGroup = groupRepository.save(group); // SDJPA executes insert/update
+        Group newGroup = groupRepository.save(group); // SDJPA executes insert/update (?? is that line necessary)
         return groupMapper.toGroupDto(newGroup);
+    }
+
+    @Transactional
+    public GroupDto editGroup(Long groupId, GroupDto groupDto) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
+
+        if (groupDto.groupName() != null) {
+            group.setGroupName(groupDto.groupName());
+        }
+
+        return groupMapper.toGroupDto(group);
+    }
+
+    @Transactional
+    public void deleteGroup(Long groupId) {
+        if(!groupRepository.existsById(groupId)) {
+            throw new EntityNotFoundException("No group with the id: " + groupId + " found");
+        }
+
+        groupRepository.deleteById(groupId);
     }
 
     @Transactional

@@ -31,11 +31,20 @@ public class Course {
     private Set<Schedule> schedules = new HashSet<>();
 
     @Setter
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "courses_groups",
             joinColumns = @JoinColumn(name = "course_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
     private Set<Group> groups = new HashSet<>(); // act as the owner and define the @JoinTable
+
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "tutor_courses",
+            joinColumns = @JoinColumn(name = "course_id", unique = true), // 1 tutor per course
+            inverseJoinColumns = @JoinColumn(name = "tutor_id")
+    )
+    private Tutor tutor;
 }
