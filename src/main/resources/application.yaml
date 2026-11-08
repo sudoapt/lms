@@ -5,6 +5,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/lms
+    username: postgres
+    password: postgres
 
 logging:
   level:

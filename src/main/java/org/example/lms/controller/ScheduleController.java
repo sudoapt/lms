@@ -3,7 +3,8 @@ package org.example.lms.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.example.lms.dto.ScheduleDto;
+import org.example.lms.dto.ScheduleRequestDto;
+import org.example.lms.dto.ScheduleResponseDto;
 import org.example.lms.service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -22,8 +23,8 @@ public class ScheduleController {
 
     @PutMapping
     @Operation(summary = "Create a schedule")
-    public ResponseEntity<ScheduleDto> createSchedule(@RequestBody ScheduleDto scheduleDto) {
-        ScheduleDto createSchedule = scheduleService.createSchedule(scheduleDto);
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto) {
+        ScheduleResponseDto createSchedule = scheduleService.createSchedule(scheduleRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createSchedule);
     }
 

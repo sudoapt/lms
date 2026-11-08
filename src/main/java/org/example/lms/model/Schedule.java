@@ -5,6 +5,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -35,10 +36,10 @@ public class Schedule {
 
 
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
 
 }

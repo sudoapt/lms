@@ -3,6 +3,7 @@ package org.example.lms.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.CourseDto;
 import org.example.lms.model.Course;
@@ -27,7 +28,9 @@ public class CourseController {
 
     @PostMapping
     @Operation(summary = "Create a new course")
-    public ResponseEntity<CourseDto> createCourse(CourseDto courseDto){
+    public ResponseEntity<CourseDto> createCourse(
+            @Valid
+            @RequestBody CourseDto courseDto){
         CourseDto newCourse = courseService.createCourse(courseDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCourse);
     }
