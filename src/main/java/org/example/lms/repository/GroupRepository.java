@@ -10,8 +10,4 @@ import org.springframework.stereotype.Repository;
 public interface GroupRepository extends JpaRepository<Group, Long> {
     boolean existsByGroupName(String groupName);
 
-    default Group getOrThrow(Long id) {
-        return findById(id).orElseThrow(() ->
-                new EntityNotFoundException("No group with the id: " + id + " is found"));
-    }
 }

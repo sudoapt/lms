@@ -13,8 +13,4 @@ import org.springframework.stereotype.Repository;
 public interface CourseRepository extends JpaRepository<Course, Long> {
     boolean existsByCourseName(String courseName);
 
-    default Course getOrThrow(Long id) {
-        return findById(id).orElseThrow(() ->
-                new EntityNotFoundException("No course with the id: " + id + " is found"));
-    }
 }

@@ -25,17 +25,41 @@ public class ScheduleService {
 
     private void validateDates(ScheduleRequestDto dto) {
         if (dto.endDate().isBefore(dto.startDate()) || dto.endDate().isEqual(dto.startDate())) {
-            throw new IllegalArgumentException("Start date cannot be after or equal to the end date.");
+            throw new IllegalArgumentException("Start date cannot be after or equal the end date.");
         }
+    }
+
+    private void validateUpdatedDates(Schedule schedule) {
+        if (schedule.getEndDate() != null && schedule.getStartDate() != null) {
+            if (schedule.getEndDate().isBefore(schedule.getStartDate()) || schedule.getEndDate().isEqual(schedule.getStartDate())) {
+                throw new IllegalArgumentException("Start date cannot be after or equal the end date.");
+            }
+        }
+    }
+
+
+    private Tutor fetchTutor(Long tutorId) {
+        return tutorRepository.findById(tutorId)
+                .orElseThrow(() -> new EntityNotFoundException("No tutor with the id: " + tutorId + " is found"));
+    }
+
+    private Course fetchCourse(Long courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("No tutor with the id: " + courseId + " is found"));
+    }
+
+    private Group fetchGroup(Long groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("No tutor with the id: " + groupId + " is found"));
     }
 
     @Transactional
     public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
         Schedule scheduleToEntity = scheduleMapper.toScheduleEntity(scheduleRequestDto);
 
-        Tutor tutor = tutorRepository.getOrThrow(scheduleRequestDto.tutorId());
-        Course course = courseRepository.getOrThrow(scheduleRequestDto.courseId());
-        Group group = groupRepository.getOrThrow(scheduleRequestDto.groupId());
+        Tutor tutor = fetchTutor(scheduleRequestDto.tutorId());
+        Course course = fetchCourse(scheduleRequestDto.courseId());
+        Group group = fetchGroup(scheduleRequestDto.groupId());
         validateDates(scheduleRequestDto);
 
         scheduleToEntity.setTutor(tutor);
@@ -51,12 +75,30 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponseDto editSchedule(Long scheduleId, ScheduleRequestDto scheduleRequestDto) {
-        Schedule schedule = scheduleRepository.getOrThrow(scheduleId);
-
-        validateDates(scheduleRequestDto);
-
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new EntityNotFoundException("No schedule with the id " + scheduleId + " is found."));
 
 
+
+        if (scheduleRequestDto.tutorId() != null && scheduleRequestDto.tutorId() != 0) {
+            schedule.setTutor(fetchTutor(scheduleRequestDto.tutorId()));
+        }
+        if (scheduleRequestDto.groupId() != null && scheduleRequestDto.groupId() != 0) {
+            schedule.setGroup(fetchGroup(scheduleRequestDto.groupId()));
+        }
+        if (scheduleRequestDto.courseId() != null && scheduleRequestDto.courseId() != 0) {
+            schedule.setCourse(fetchCourse(scheduleRequestDto.courseId()));
+        }
+        if (scheduleRequestDto.startDate() != null) {
+            schedule.setStartDate(scheduleRequestDto.startDate());
+        }
+        if (scheduleRequestDto.endDate() != null) {
+            schedule.setEndDate(scheduleRequestDto.endDate());
+        }
+
+        validateUpdatedDates(schedule);
+
+        return scheduleMapper.toDto(schedule);
 
 
     }

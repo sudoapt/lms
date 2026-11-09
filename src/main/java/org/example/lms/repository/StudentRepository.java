@@ -12,9 +12,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpecificationExecutor<Student> {
-    //    Page<StudentFilterDto> findAll(StudentFilterDto studentFilterDto, Pageable pageable);
-    default Student getOrThrow(Long id) {
-        return findById(id).orElseThrow(() ->
-                new EntityNotFoundException("No student with the id: " + id + " is found"));
-    }
 }
