@@ -30,7 +30,8 @@ public class StudentController {
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "2") int size) {
         // fallback for an empty search (no request body)
-        StudentFilterDto filterDto = (studentFilterDto != null) ? studentFilterDto : new StudentFilterDto(null, null, List.of(), List.of());
+        StudentFilterDto filterDto = (studentFilterDto != null) ? studentFilterDto :
+                new StudentFilterDto(null, null, List.of(), List.of());
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         Page<StudentDto> filteredStudents = studentService.filterStudents(filterDto, pageable);

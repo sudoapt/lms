@@ -11,13 +11,9 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         uses = {TutorMapper.class, GroupMapper.class, StudentMapper.class, CourseMapper.class})
 public interface ScheduleMapper {
-//    ScheduleMapper INSTANCE = Mappers.getMapper(ScheduleMapper.class);
-//    @Mapping(source = "tutor.id", target = "tutorId")
     @Mapping(source = "tutor.firstName", target = "tutorFirstName")
     @Mapping(source = "tutor.lastName", target = "tutorLastName")
-//    @Mapping(source = "course.id", target = "courseId")
     @Mapping(source = "course.courseName", target = "courseName")
-//    @Mapping(source = "group.id", target = "groupId")
     @Mapping(source = "group.groupName", target = "groupName")
     ScheduleResponseDto toDto(Schedule schedule);
 

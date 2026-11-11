@@ -2,6 +2,7 @@ package org.example.lms.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.example.lms.dto.ScheduleFilterDto;
 import org.example.lms.dto.ScheduleRequestDto;
 import org.example.lms.dto.ScheduleResponseDto;
 import org.example.lms.mapper.*;
@@ -10,6 +11,9 @@ import org.example.lms.model.Group;
 import org.example.lms.model.Schedule;
 import org.example.lms.model.Tutor;
 import org.example.lms.repository.*;
+import org.example.lms.specification.ScheduleSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +77,7 @@ public class ScheduleService {
         return scheduleMapper.toDto(newSchedule);
     }
 
+
     @Transactional
     public ScheduleResponseDto editSchedule(Long scheduleId, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
@@ -100,7 +105,18 @@ public class ScheduleService {
 
         return scheduleMapper.toDto(schedule);
 
+    }
 
+    @Transactional
+    public Page<ScheduleResponseDto> getSchedules(Pageable pageable) {
+        Page<Schedule> schedulesPage = scheduleRepository.findAll(pageable);
+        return schedulesPage.map(scheduleMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ScheduleResponseDto> filterSchedules(ScheduleFilterDto scheduleFilterDto, Pageable pageable) {
+        Page<Schedule> schedulePage = scheduleRepository.findAll(ScheduleSpecification.scheduleByFilter(scheduleFilterDto), pageable);
+        return schedulePage.map(scheduleMapper::toDto);
     }
 
 }

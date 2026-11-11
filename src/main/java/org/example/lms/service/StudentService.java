@@ -91,7 +91,7 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public Page<StudentDto> filterStudents(StudentFilterDto studentFilterDto, Pageable pageable) {
-        Page<Student> studentsPage = studentRepository.findAll (StudentSpecification.studentByFilter(studentFilterDto), pageable);
+        Page<Student> studentsPage = studentRepository.findAll(StudentSpecification.studentByFilter(studentFilterDto), pageable);
         return studentsPage.map(studentMapper::toStudentDto);
     }
 }
