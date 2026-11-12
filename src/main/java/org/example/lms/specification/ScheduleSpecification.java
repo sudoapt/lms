@@ -18,7 +18,7 @@ public class ScheduleSpecification {
     public static Specification<Schedule> scheduleByFilter(ScheduleFilterDto scheduleFilterDto) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            // TODO: handle empty field
+
             if (scheduleFilterDto.id() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("id"), scheduleFilterDto.id()));
             }
@@ -28,7 +28,7 @@ public class ScheduleSpecification {
 
             // if neither are provided -- skip the block
             if (hasFirstName || hasLastName) {
-                Join<Schedule, Tutor> tutorJoin = root.join("tutor", JoinType.LEFT);
+                Join<Schedule, Tutor> tutorJoin = root.join("tutor");
                 if (hasFirstName) {
                     predicates.add(criteriaBuilder.like(
                             criteriaBuilder.lower(tutorJoin.get("firstName")),
@@ -43,18 +43,18 @@ public class ScheduleSpecification {
                 }
             }
 
-            // 3. Filter by Course Title (Assuming field name in Course entity is 'title')
+
             if (scheduleFilterDto.courseName() != null && !scheduleFilterDto.courseName().isBlank()) {
-                Join<Schedule, Course> courseJoin = root.join("course", JoinType.LEFT);
+                Join<Schedule, Course> courseJoin = root.join("course");
                 predicates.add(criteriaBuilder.like(
                         criteriaBuilder.lower(courseJoin.get("courseName")),
                         "%" + scheduleFilterDto.courseName().toLowerCase() + "%"
                 ));
             }
 
-            // 4. Filter by Group Name
+
             if (scheduleFilterDto.groupName() != null && !scheduleFilterDto.groupName().isBlank()) {
-                Join<Schedule, Group> groupJoin = root.join("group", JoinType.LEFT);
+                Join<Schedule, Group> groupJoin = root.join("group");
                 predicates.add(criteriaBuilder.like(
                         criteriaBuilder.lower(groupJoin.get("groupName")),
                         "%" + scheduleFilterDto.groupName().toLowerCase() + "%"
@@ -64,9 +64,10 @@ public class ScheduleSpecification {
             if (scheduleFilterDto.startDate() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(
                         root.get("startDate"),
-                                scheduleFilterDto.startDate()
+                        scheduleFilterDto.startDate()
                 ));
             }
+
             if (scheduleFilterDto.endDate() != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(
                         root.get("endDate"),

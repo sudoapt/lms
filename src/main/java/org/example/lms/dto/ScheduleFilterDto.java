@@ -11,4 +11,14 @@ public record ScheduleFilterDto(
         LocalDate startDate,
         LocalDate endDate
 ) {
+    /// @return True if no data passed to filter
+    public boolean isEmpty() {
+        return id == null
+                && tutorFirstName == null
+                && tutorLastName == null
+                && courseName == null
+                && groupName == null
+                && startDate == null
+                && endDate == null;
+    }
 }

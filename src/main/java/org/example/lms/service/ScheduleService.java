@@ -85,13 +85,13 @@ public class ScheduleService {
 
 
 
-        if (scheduleRequestDto.tutorId() != null && scheduleRequestDto.tutorId() != 0) {
+        if (scheduleRequestDto.tutorId() != null) {
             schedule.setTutor(fetchTutor(scheduleRequestDto.tutorId()));
         }
-        if (scheduleRequestDto.groupId() != null && scheduleRequestDto.groupId() != 0) {
+        if (scheduleRequestDto.groupId() != null) {
             schedule.setGroup(fetchGroup(scheduleRequestDto.groupId()));
         }
-        if (scheduleRequestDto.courseId() != null && scheduleRequestDto.courseId() != 0) {
+        if (scheduleRequestDto.courseId() != null) {
             schedule.setCourse(fetchCourse(scheduleRequestDto.courseId()));
         }
         if (scheduleRequestDto.startDate() != null) {
@@ -115,8 +115,21 @@ public class ScheduleService {
 
     @Transactional(readOnly = true)
     public Page<ScheduleResponseDto> filterSchedules(ScheduleFilterDto scheduleFilterDto, Pageable pageable) {
-        Page<Schedule> schedulePage = scheduleRepository.findAll(ScheduleSpecification.scheduleByFilter(scheduleFilterDto), pageable);
+        Page<Schedule> schedulePage;
+        // check if no data for filter is passed
+        if (scheduleFilterDto == null || scheduleFilterDto.isEmpty()) {
+            schedulePage = scheduleRepository.findAll(pageable);
+        } else {
+            schedulePage = scheduleRepository.findAll(ScheduleSpecification.scheduleByFilter(scheduleFilterDto), pageable);
+        }
         return schedulePage.map(scheduleMapper::toDto);
     }
 
+    @Transactional
+    public void deleteSchedule(Long scheduleId) {
+        if (!scheduleRepository.existsById(scheduleId)) {
+            throw new EntityNotFoundException("No student with the id: " + scheduleId + " found");
+        }
+        scheduleRepository.deleteById(scheduleId);
+    }
 }

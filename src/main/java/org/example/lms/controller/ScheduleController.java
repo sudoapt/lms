@@ -25,15 +25,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Schedules", description = "Schedule management")
 public class ScheduleController {
     private final ScheduleService scheduleService;
-    /***
-     * ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported,
-     * meaning that there is no guarantee about the stability of the resulting JSON structure!
-     * 	For a stable JSON structure, please use Spring Data's PagedModel
-     * 	(globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
-     * 	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in
-     * 	https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
-     * 	***/
-    private final PagedResourcesAssembler<Schedule> pagedResourcesAssembler;
 
     @PutMapping
     @Operation(summary = "Create a schedule")
@@ -50,12 +41,12 @@ public class ScheduleController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "2") int size
     ) {
-        ScheduleFilterDto filterDto = (scheduleFilterDto != null) ? scheduleFilterDto :
-                new ScheduleFilterDto(null,
-                        null, null, null,
-                        null, null, null);
+//        ScheduleFilterDto filterDto = (scheduleFilterDto != null) ? scheduleFilterDto :
+//                new ScheduleFilterDto(null,
+//                        null, null, null,
+//                        null, null, null);
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-        Page<ScheduleResponseDto> schedulePage = scheduleService.filterSchedules(filterDto, pageable);
+        Page<ScheduleResponseDto> schedulePage = scheduleService.filterSchedules(scheduleFilterDto, pageable);
         return new PagedModel<>(schedulePage);
     }
 
@@ -67,6 +58,15 @@ public class ScheduleController {
     ) {
         ScheduleResponseDto editedSchedule = scheduleService.editSchedule(scheduleId, scheduleRequestDto);
         return ResponseEntity.ok(editedSchedule);
+    }
+
+    @DeleteMapping("/{scheduleId}")
+    @Operation(summary = "Delete a schedule")
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable Long scheduleId
+    ) {
+        scheduleService.deleteSchedule(scheduleId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
