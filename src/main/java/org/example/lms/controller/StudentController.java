@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,11 +29,8 @@ public class StudentController {
     public ResponseEntity<Page<StudentDto>> getStudentsByFilter(@RequestBody(required = false) StudentFilterDto studentFilterDto,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "2") int size) {
-        // fallback for an empty search (no request body)
-        StudentFilterDto filterDto = (studentFilterDto !=null) ? studentFilterDto : new StudentFilterDto(null, null, List.of(), List.of());
-
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-        Page<StudentDto> filteredStudents = studentService.filterStudents(filterDto, pageable);
+        Page<StudentDto> filteredStudents = studentService.filterStudents(studentFilterDto, pageable);
         return ResponseEntity.ok(filteredStudents); // TODO: handle empty search
     }
 
@@ -46,7 +42,7 @@ public class StudentController {
     }
 
     @PutMapping("/{studentId}/groups/{groupId}")
-    @Operation(summary = "Add a student to a group")
+    @Operation(summary = "Add a student to a group. Returns void")
     public ResponseEntity<Void> addStudentToGroup(
             @PathVariable Long studentId,
             @PathVariable Long groupId
@@ -54,4 +50,33 @@ public class StudentController {
         studentService.addStudentToGroup(studentId, groupId);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{studentId}")
+    @Operation(summary = "Edit student")
+    public ResponseEntity<StudentDto> editStudent(
+            @PathVariable Long studentId, @Valid @RequestBody StudentDto studentDto
+            ) {
+       StudentDto editedStudent =  studentService.editStudent(studentId, studentDto);
+       return ResponseEntity.ok(editedStudent);
+    }
+
+    @PatchMapping("/{studentId}/groups/{groupId}")
+    @Operation(summary = "Remove a student from a group. Returns void")
+    public ResponseEntity<StudentDto> removeStudentFromGroup(
+            @PathVariable Long studentId,
+            @PathVariable Long groupId
+    ) {
+        studentService.removeStudentFromGroup(studentId, groupId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{studentId}")
+    @Operation(summary = "Delete a student")
+    public ResponseEntity<Void> deleteStudent(
+            @PathVariable Long studentId
+    ) {
+        studentService.deleteStudent(studentId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }

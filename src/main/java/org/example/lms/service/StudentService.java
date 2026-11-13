@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.StudentDto;
 import org.example.lms.dto.StudentFilterDto;
+import org.example.lms.exception.StudentMustHaveAtLeastOneGroupException;
 import org.example.lms.mapper.StudentMapper;
 import org.example.lms.model.Group;
 import org.example.lms.model.Student;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -29,7 +29,7 @@ public class StudentService {
     @Transactional
     public StudentDto createStudent(StudentDto studentDto) {
         Student student = studentMapper.toStudentEntity(studentDto);
-        // check if passed groups exists in the DB
+        // check if the passed groups exists in the DB
         Set<Group> groups = new HashSet<>(groupRepository.findAllById(studentDto.groupIDs()));
 
         if (groups.size() != studentDto.groupIDs().size()) {
@@ -43,9 +43,33 @@ public class StudentService {
     }
 
     @Transactional
-    public void addStudentToGroup(Long studentId, Long groupId){
+    public StudentDto editStudent(Long studentId, StudentDto studentDto) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found" ));
+                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found"));
+
+        if (studentDto.firstName() != null) {
+            student.setFirstName(studentDto.firstName());
+        }
+
+        if (studentDto.lastName() != null) {
+            student.setLastName(studentDto.lastName());
+        }
+
+        return studentMapper.toStudentDto(student);
+    }
+
+    @Transactional
+    public void deleteStudent(Long studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new EntityNotFoundException("No student with the id: " + studentId + " found");
+        }
+        studentRepository.deleteById(studentId);
+    }
+
+    @Transactional
+    public void addStudentToGroup(Long studentId, Long groupId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found"));
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
 
@@ -55,12 +79,29 @@ public class StudentService {
 
     }
 
+    @Transactional
+    public void removeStudentFromGroup(Long studentId, Long groupId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found"));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
+
+        if (student.getGroups().size() == 1) {
+            throw  new StudentMustHaveAtLeastOneGroupException(studentId, groupId);
+        }
+
+        student.getGroups().remove(group);
+        group.getStudents().remove(student);
+    }
+
     @Transactional(readOnly = true)
     public Page<StudentDto> filterStudents(StudentFilterDto studentFilterDto, Pageable pageable) {
-        Page<Student> studentsPage = studentRepository.findAll (StudentSpecification.studentByFilter(studentFilterDto), pageable);
+        Page<Student> studentsPage;
+        if (studentFilterDto == null || studentFilterDto.isEmpty()) {
+            studentsPage = studentRepository.findAll(pageable);
+        } else {
+            studentsPage = studentRepository.findAll(StudentSpecification.studentByFilter(studentFilterDto), pageable);
+        }
         return studentsPage.map(studentMapper::toStudentDto);
-//        return students.stream()
-//                .map(studentMapper::toStudentDto)
-//                .toList();
     }
 }

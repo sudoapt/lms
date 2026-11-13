@@ -1,12 +1,21 @@
 spring:
   application:
     name: lms
+  data:
+    web:
+      pageable:
+        serialization-mode: via_dto
   jpa:
     properties:
       hibernate:
         format_sql: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/lms
+    username: postgres
+    password: postgres
 
 logging:
   level:
-    org.hibernate.sql: DEBUG
-    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.sql: debug
+    org.hibernate.orm.jdbc.bind: trace
