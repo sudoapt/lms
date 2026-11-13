@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.StudentDto;
 import org.example.lms.dto.StudentFilterDto;
+import org.example.lms.exception.StudentMustHaveAtLeastOneGroupException;
 import org.example.lms.mapper.StudentMapper;
 import org.example.lms.model.Group;
 import org.example.lms.model.Student;
@@ -84,6 +85,10 @@ public class StudentService {
                 .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found"));
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
+
+        if (student.getGroups().size() == 1) {
+            throw  new StudentMustHaveAtLeastOneGroupException(studentId, groupId);
+        }
 
         student.getGroups().remove(group);
         group.getStudents().remove(student);

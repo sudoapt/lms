@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.GroupDto;
 import org.example.lms.exception.AlreadyExistsException;
+import org.example.lms.exception.GroupHasStudentException;
 import org.example.lms.mapper.GroupMapper;
 import org.example.lms.model.Course;
 import org.example.lms.model.Group;
@@ -45,8 +46,11 @@ public class GroupService {
 
     @Transactional
     public void deleteGroup(Long groupId) {
-        if(!groupRepository.existsById(groupId)) {
-            throw new EntityNotFoundException("No group with the id: " + groupId + " found");
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
+
+        if (group.getStudents() != null && !group.getStudents().isEmpty()) {
+            throw new GroupHasStudentException(groupId);
         }
 
         groupRepository.deleteById(groupId);
