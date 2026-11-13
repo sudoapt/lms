@@ -8,4 +8,10 @@ public record StudentFilterDto(
         List<Long> groupsIDs,
         List<Long> coursesIDs
 ) {
+    public boolean isEmpty() {
+        return studentFilterFirstName == null
+                && studentFilerLastName == null
+                && groupsIDs.isEmpty()
+                && coursesIDs.isEmpty();
+    }
 }

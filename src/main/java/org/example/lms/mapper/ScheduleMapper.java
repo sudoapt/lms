@@ -6,7 +6,6 @@ import org.example.lms.model.Schedule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         uses = {TutorMapper.class, GroupMapper.class, StudentMapper.class, CourseMapper.class})

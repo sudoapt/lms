@@ -8,5 +8,6 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface TutorMapper {
     TutorDto toTutorDto(Tutor tutor);
+
     Tutor tuTutorEntity(TutorDto tutorDto);
 }

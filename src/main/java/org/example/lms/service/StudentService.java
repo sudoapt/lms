@@ -44,7 +44,7 @@ public class StudentService {
     @Transactional
     public StudentDto editStudent(Long studentId, StudentDto studentDto) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found" ));
+                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found"));
 
         if (studentDto.firstName() != null) {
             student.setFirstName(studentDto.firstName());
@@ -66,9 +66,9 @@ public class StudentService {
     }
 
     @Transactional
-    public void addStudentToGroup(Long studentId, Long groupId){
+    public void addStudentToGroup(Long studentId, Long groupId) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found" ));
+                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found"));
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
 
@@ -81,7 +81,7 @@ public class StudentService {
     @Transactional
     public void removeStudentFromGroup(Long studentId, Long groupId) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found" ));
+                .orElseThrow(() -> new EntityNotFoundException("No student with the id: " + studentId + " found"));
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
 
@@ -91,7 +91,12 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public Page<StudentDto> filterStudents(StudentFilterDto studentFilterDto, Pageable pageable) {
-        Page<Student> studentsPage = studentRepository.findAll(StudentSpecification.studentByFilter(studentFilterDto), pageable);
+        Page<Student> studentsPage;
+        if (studentFilterDto == null || studentFilterDto.isEmpty()) {
+            studentsPage = studentRepository.findAll(pageable);
+        } else {
+            studentsPage = studentRepository.findAll(StudentSpecification.studentByFilter(studentFilterDto), pageable);
+        }
         return studentsPage.map(studentMapper::toStudentDto);
     }
 }

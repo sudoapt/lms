@@ -1,10 +1,8 @@
 package org.example.lms.specification;
 
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.example.lms.dto.ScheduleFilterDto;
-import org.example.lms.dto.ScheduleResponseDto;
 import org.example.lms.model.Course;
 import org.example.lms.model.Group;
 import org.example.lms.model.Schedule;

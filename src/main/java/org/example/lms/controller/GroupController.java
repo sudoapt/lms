@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.GroupDto;
-import org.example.lms.dto.StudentDto;
 import org.example.lms.service.GroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +20,8 @@ public class GroupController {
     @PostMapping
     @Operation(summary = "Create a new group")
     public ResponseEntity<GroupDto> createGroup(@Valid @RequestBody GroupDto groupDto) {
-       GroupDto createdGroup =  groupService.createGroup(groupDto);
-       return ResponseEntity.status(HttpStatus.CREATED).body(createdGroup);
+        GroupDto createdGroup = groupService.createGroup(groupDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdGroup);
     }
 
     @PutMapping("/{groupId}/courses/{courseId}")
@@ -40,7 +39,7 @@ public class GroupController {
     public ResponseEntity<GroupDto> editGroup(
             @PathVariable Long groupId,
             @RequestBody GroupDto groupDto) {
-        GroupDto editedGroup =  groupService.editGroup(groupId, groupDto);
+        GroupDto editedGroup = groupService.editGroup(groupId, groupDto);
 
         return ResponseEntity.ok(editedGroup);
     }

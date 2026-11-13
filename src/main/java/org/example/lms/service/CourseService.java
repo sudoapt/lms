@@ -9,7 +9,6 @@ import org.example.lms.model.Course;
 import org.example.lms.repository.CourseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +19,14 @@ public class CourseService {
     private final CourseMapper courseMapper;
 
     @Transactional
-    public CourseDto createCourse(CourseDto courseDto){
+    public CourseDto createCourse(CourseDto courseDto) {
         if (courseRepository.existsByCourseName(courseDto.courseName())) {
 
             throw new AlreadyExistsException("Course name " + courseDto.courseName() + " is already taken");
         }
 
         Course course = courseMapper.toCourseEntity(courseDto);
-        Course newCourse = courseRepository.save(course); // SDJPA executes insert/update
+        Course newCourse = courseRepository.save(course); // SDJPA executes insert/update (IS THAT A MUST?)
         return courseMapper.toCourseDto(newCourse);
     }
 
@@ -51,7 +50,7 @@ public class CourseService {
     @Transactional
     public void deleteCourse(Long courseId) {
         if (!courseRepository.existsById(courseId)) {
-            throw  new EntityNotFoundException("No course with the id: " + courseId + " found");
+            throw new EntityNotFoundException("No course with the id: " + courseId + " found");
         }
         courseRepository.existsById(courseId);
     }

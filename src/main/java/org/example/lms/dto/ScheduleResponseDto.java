@@ -1,7 +1,6 @@
 package org.example.lms.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public record ScheduleResponseDto(
         Long id,

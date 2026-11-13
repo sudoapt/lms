@@ -41,10 +41,6 @@ public class ScheduleController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "2") int size
     ) {
-//        ScheduleFilterDto filterDto = (scheduleFilterDto != null) ? scheduleFilterDto :
-//                new ScheduleFilterDto(null,
-//                        null, null, null,
-//                        null, null, null);
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         Page<ScheduleResponseDto> schedulePage = scheduleService.filterSchedules(scheduleFilterDto, pageable);
         return new PagedModel<>(schedulePage);

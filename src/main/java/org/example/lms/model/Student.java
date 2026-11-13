@@ -16,7 +16,6 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-//    @EqualsAndHashCode.Include
     private Long id;
 
     @Setter
@@ -38,9 +37,5 @@ public class Student {
     private Set<Group> groups = new HashSet<>();
 
     //TODO: group can't be deleted if it's the only group for a student
-
-
-
-
 
 }

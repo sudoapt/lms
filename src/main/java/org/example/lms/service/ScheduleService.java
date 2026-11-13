@@ -84,7 +84,6 @@ public class ScheduleService {
                 .orElseThrow(() -> new EntityNotFoundException("No schedule with the id " + scheduleId + " is found."));
 
 
-
         if (scheduleRequestDto.tutorId() != null) {
             schedule.setTutor(fetchTutor(scheduleRequestDto.tutorId()));
         }

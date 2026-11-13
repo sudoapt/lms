@@ -3,11 +3,9 @@ package org.example.lms.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.example.lms.dto.GroupDto;
 import org.example.lms.dto.TutorDto;
 import org.example.lms.mapper.TutorMapper;
 import org.example.lms.model.Course;
-import org.example.lms.model.Group;
 import org.example.lms.model.Tutor;
 import org.example.lms.repository.CourseRepository;
 import org.example.lms.repository.TutorRepository;
