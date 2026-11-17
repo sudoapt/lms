@@ -9,5 +9,5 @@ import org.mapstruct.MappingConstants;
 public interface TutorMapper {
     TutorDto toTutorDto(Tutor tutor);
 
-    Tutor tuTutorEntity(TutorDto tutorDto);
+    Tutor toTutorEntity(TutorDto tutorDto);
 }

@@ -15,6 +15,10 @@ spring:
     username: postgres
     password: postgres
 
+app:
+  scheduling:
+    cleanup-cron: "* * 3 * * *"
+
 logging:
   level:
     org.hibernate.sql: debug

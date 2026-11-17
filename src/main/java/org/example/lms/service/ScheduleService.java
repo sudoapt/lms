@@ -27,36 +27,6 @@ public class ScheduleService {
 
     private final ScheduleMapper scheduleMapper;
 
-    private void validateDates(ScheduleRequestDto dto) {
-        if (dto.endDate().isBefore(dto.startDate()) || dto.endDate().isEqual(dto.startDate())) {
-            throw new IllegalArgumentException("Start date cannot be after or equal the end date.");
-        }
-    }
-
-    private void validateUpdatedDates(Schedule schedule) {
-        if (schedule.getEndDate() != null && schedule.getStartDate() != null) {
-            if (schedule.getEndDate().isBefore(schedule.getStartDate()) || schedule.getEndDate().isEqual(schedule.getStartDate())) {
-                throw new IllegalArgumentException("Start date cannot be after or equal the end date.");
-            }
-        }
-    }
-
-
-    private Tutor fetchTutor(Long tutorId) {
-        return tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new EntityNotFoundException("No tutor with the id: " + tutorId + " is found"));
-    }
-
-    private Course fetchCourse(Long courseId) {
-        return courseRepository.findById(courseId)
-                .orElseThrow(() -> new EntityNotFoundException("No tutor with the id: " + courseId + " is found"));
-    }
-
-    private Group fetchGroup(Long groupId) {
-        return groupRepository.findById(groupId)
-                .orElseThrow(() -> new EntityNotFoundException("No tutor with the id: " + groupId + " is found"));
-    }
-
     @Transactional
     public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
         Schedule scheduleToEntity = scheduleMapper.toScheduleEntity(scheduleRequestDto);
@@ -106,12 +76,6 @@ public class ScheduleService {
 
     }
 
-    @Transactional
-    public Page<ScheduleResponseDto> getSchedules(Pageable pageable) {
-        Page<Schedule> schedulesPage = scheduleRepository.findAll(pageable);
-        return schedulesPage.map(scheduleMapper::toDto);
-    }
-
     @Transactional(readOnly = true)
     public Page<ScheduleResponseDto> filterSchedules(ScheduleFilterDto scheduleFilterDto, Pageable pageable) {
         Page<Schedule> schedulePage;
@@ -130,5 +94,35 @@ public class ScheduleService {
             throw new EntityNotFoundException("No student with the id: " + scheduleId + " found");
         }
         scheduleRepository.deleteById(scheduleId);
+    }
+
+    private void validateDates(ScheduleRequestDto dto) {
+        if (dto.endDate().isBefore(dto.startDate()) || dto.endDate().isEqual(dto.startDate())) {
+            throw new IllegalArgumentException("Start date cannot be after or equal the end date.");
+        }
+    }
+
+    private void validateUpdatedDates(Schedule schedule) {
+        if (schedule.getEndDate() != null && schedule.getStartDate() != null) {
+            if (schedule.getEndDate().isBefore(schedule.getStartDate()) || schedule.getEndDate().isEqual(schedule.getStartDate())) {
+                throw new IllegalArgumentException("Start date cannot be after or equal the end date.");
+            }
+        }
+    }
+
+
+    private Tutor fetchTutor(Long tutorId) {
+        return tutorRepository.findById(tutorId)
+                .orElseThrow(() -> new EntityNotFoundException("No tutor with the id: " + tutorId + " is found"));
+    }
+
+    private Course fetchCourse(Long courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("No tutor with the id: " + courseId + " is found"));
+    }
+
+    private Group fetchGroup(Long groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("No tutor with the id: " + groupId + " is found"));
     }
 }

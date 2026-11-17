@@ -21,7 +21,7 @@ public class TutorService {
 
     @Transactional
     public TutorDto createTutor(TutorDto tutorDto) {
-        Tutor tutor = tutorMapper.tuTutorEntity(tutorDto);
+        Tutor tutor = tutorMapper.toTutorEntity(tutorDto);
         Tutor newTutor = tutorRepository.save(tutor);
 
         return tutorMapper.toTutorDto(newTutor);
