@@ -93,20 +93,18 @@ class ScheduleControllerTest {
 
         Schedule s1 = new Schedule();
         s1.setStartDate(LocalDate.of(2026, 11, 15));
-        s1.setEndDate(LocalDate.of(2026, 12, 15));
+        s1.setEndDate(LocalDate.of(2026, 11, 20));
         s1.setTutor(tutor1);
         s1.setGroup(group1);
         s1.setCourse(course1);
 
-        // Matches the filter (within Nov 14 - Nov 24, 2026)
         Schedule s2 = new Schedule();
         s2.setStartDate(LocalDate.of(2026, 11, 18));
-        s2.setEndDate(LocalDate.of(2026, 12, 18));
+        s2.setEndDate(LocalDate.of(2026, 11, 23));
         s2.setTutor(tutor1);
         s2.setGroup(group1);
         s2.setCourse(course1);
 
-        // Does NOT match the filter (outside date range & different group)
         Schedule s3 = new Schedule();
         s3.setStartDate(LocalDate.of(2026, 10, 1));
         s3.setEndDate(LocalDate.of(2026, 12, 11));
@@ -135,7 +133,7 @@ class ScheduleControllerTest {
                 null,
                 null,
                 LocalDate.of(2026, 11, 14),
-                LocalDate.now().plusDays(7));
+                LocalDate.of(2026, 11, 24));
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
