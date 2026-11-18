@@ -18,12 +18,10 @@ import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.junit.jupiter.Container;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -35,20 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
 @Testcontainers
-class ScheduleControllerTest {
-
-    @Container
-    static PostgreSQLContainer postgreSQLContainer =
-            new PostgreSQLContainer("postgres:latest");
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
-
-    }
+class ScheduleControllerTest extends AbstractIT {
 
 
     @Autowired
@@ -135,18 +120,12 @@ class ScheduleControllerTest {
                 LocalDate.of(2026, 11, 14),
                 LocalDate.of(2026, 11, 24));
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<ScheduleFilterDto> requestEntity = new HttpEntity<>(filterDto, httpHeaders); // bind headers and body
-
         ResponseEntity<PagedResponse<ScheduleResponseDto>> response = restTemplate
                 .exchange("api/v1/schedule/schedules?page=0&size=2",
                         HttpMethod.POST,
-                        requestEntity,
+                        requestEntity(filterDto),
                         new ParameterizedTypeReference<>() {
                         });
-        System.out.println("RAW STATUS: " + response.getStatusCode());
-        System.out.println("RAW BODY: " + response.getBody());
 
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -165,10 +144,4 @@ class ScheduleControllerTest {
     void deleteSchedule() {
     }
 
-    /**
-     * helper records to match the JSON structure serialized by Spring Data's PagedModel.
-     */
-    record PagedResponse<T>(List<T> content, PageMetadata page) {}
-
-    record PageMetadata(int size, int number, long totalElements, int totalPages) {}
 }
