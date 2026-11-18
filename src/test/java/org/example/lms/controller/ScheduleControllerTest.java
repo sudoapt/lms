@@ -140,7 +140,7 @@ class ScheduleControllerTest {
         HttpEntity<ScheduleFilterDto> requestEntity = new HttpEntity<>(filterDto, httpHeaders); // bind headers and body
 
         ResponseEntity<PagedResponse<ScheduleResponseDto>> response = restTemplate
-                .exchange("/schedules?page=0&size=2",
+                .exchange("api/v1/schedule/schedules?page=0&size=2",
                         HttpMethod.POST,
                         requestEntity,
                         new ParameterizedTypeReference<>() {
@@ -149,7 +149,7 @@ class ScheduleControllerTest {
         System.out.println("RAW BODY: " + response.getBody());
 
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().content()).hasSize(2);
         assertThat(response.getBody().page().totalElements()).isGreaterThanOrEqualTo(2);
