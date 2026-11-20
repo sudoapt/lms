@@ -1,21 +1,20 @@
 package org.example.lms.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.StudentDto;
 import org.example.lms.dto.StudentFilterDto;
 import org.example.lms.service.StudentService;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,10 +25,11 @@ public class StudentController {
 
     @PostMapping("/search")
     @Operation(summary = "Get student by filter")
+    @PageableAsQueryParam
     public ResponseEntity<Page<StudentDto>> getStudentsByFilter(@RequestBody(required = false) StudentFilterDto studentFilterDto,
-                                                                @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "2") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+                                                                @Parameter(hidden = true)
+                                                                @PageableDefault(size = 2, sort = "id")
+                                                                Pageable pageable) {
         Page<StudentDto> filteredStudents = studentService.filterStudents(studentFilterDto, pageable);
         return ResponseEntity.ok(filteredStudents);
     }

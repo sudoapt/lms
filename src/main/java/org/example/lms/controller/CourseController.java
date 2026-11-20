@@ -1,17 +1,16 @@
 package org.example.lms.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.CourseDto;
-import org.example.lms.repository.CourseRepository;
 import org.example.lms.service.CourseService;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Courses", description = "Course management")
 public class CourseController {
     private final CourseService courseService;
-    private final CourseRepository courseRepository;
 
     @PostMapping
     @Operation(summary = "Create a new course")
@@ -37,8 +35,10 @@ public class CourseController {
     @PageableAsQueryParam
     @Operation(summary = "Get all the courses")
     public ResponseEntity<Page<CourseDto>> getCourse(
+            @Parameter(hidden = true)
+            @PageableDefault(size = 2, sort = "id")
+            Pageable pageable
     ) {
-        Pageable pageable = PageRequest.of(0, 2, Sort.by("id").ascending());
         Page<CourseDto> courseDtos = courseService.getCourses(pageable);
         return ResponseEntity.ok(courseDtos);
     }

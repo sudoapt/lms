@@ -1,20 +1,19 @@
 package org.example.lms.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.ScheduleFilterDto;
 import org.example.lms.dto.ScheduleRequestDto;
 import org.example.lms.dto.ScheduleResponseDto;
-import org.example.lms.model.Schedule;
 import org.example.lms.service.ScheduleService;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
-import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,12 +35,13 @@ public class ScheduleController {
 
     @PostMapping()
     @Operation(summary = "Filter schedule")
+    @PageableAsQueryParam
     public PagedModel<ScheduleResponseDto> getScheduleByFilter(
             @RequestBody(required = false) ScheduleFilterDto scheduleFilterDto,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "2") int size
+            @Parameter(hidden = true)
+            @PageableDefault(size = 2, sort = "id")
+            Pageable pageable
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         Page<ScheduleResponseDto> schedulePage = scheduleService.filterSchedules(scheduleFilterDto, pageable);
         return new PagedModel<>(schedulePage);
     }
