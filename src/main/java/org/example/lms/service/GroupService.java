@@ -10,6 +10,8 @@ import org.example.lms.model.Course;
 import org.example.lms.model.Group;
 import org.example.lms.repository.CourseRepository;
 import org.example.lms.repository.GroupRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,12 @@ public class GroupService {
     private final GroupMapper groupMapper;
 
     @Transactional
+    public Page<GroupDto> getGroups(Pageable pageable) {
+        Page<Group> groupsPage = groupRepository.findAll(pageable);
+        return groupsPage.map(groupMapper::toGroupDto);
+    }
+
+    @Transactional
     public GroupDto createGroup(GroupDto groupDto) {
         if (groupRepository.existsByGroupName(groupDto.groupName())) {
 
@@ -28,7 +36,7 @@ public class GroupService {
         }
 
         Group group = groupMapper.toGroupEntity(groupDto);
-        Group newGroup = groupRepository.save(group); // SDJPA executes insert/update (?? is that line necessary)
+        Group newGroup = groupRepository.save(group);
         return groupMapper.toGroupDto(newGroup);
     }
 

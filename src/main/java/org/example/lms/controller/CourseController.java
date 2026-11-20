@@ -2,14 +2,12 @@ package org.example.lms.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.CourseDto;
-import org.example.lms.model.Course;
 import org.example.lms.repository.CourseRepository;
 import org.example.lms.service.CourseService;
-import org.example.lms.service.GroupService;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/course")
+@RequestMapping(path = "api/v1/courses")
 @Tag(name = "Courses", description = "Course management")
 public class CourseController {
     private final CourseService courseService;
@@ -35,13 +33,12 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newCourse);
     }
 
-    @GetMapping("/courses")
+    @GetMapping()
+    @PageableAsQueryParam
     @Operation(summary = "Get all the courses")
     public ResponseEntity<Page<CourseDto>> getCourse(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "2") int size
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("id").ascending());
         Page<CourseDto> courseDtos = courseService.getCourses(pageable);
         return ResponseEntity.ok(courseDtos);
     }
@@ -59,9 +56,6 @@ public class CourseController {
     @DeleteMapping("/{courseId}")
     @Operation(summary = "Delete a course")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId) {
-        if (!courseRepository.existsById(courseId)) {
-            throw  new EntityNotFoundException("No course with an id: " + courseId + " is found");
-        }
         courseService.deleteCourse(courseId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

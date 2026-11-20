@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/schedule")
+@RequestMapping(path = "api/v1/schedules")
 @Tag(name = "Schedules", description = "Schedule management")
 public class ScheduleController {
     private final ScheduleService scheduleService;
@@ -34,7 +34,7 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createSchedule);
     }
 
-    @PostMapping("/schedules")
+    @PostMapping()
     @Operation(summary = "Filter schedule")
     public PagedModel<ScheduleResponseDto> getScheduleByFilter(
             @RequestBody(required = false) ScheduleFilterDto scheduleFilterDto,

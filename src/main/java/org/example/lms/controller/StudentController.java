@@ -31,7 +31,7 @@ public class StudentController {
                                                                 @RequestParam(defaultValue = "2") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         Page<StudentDto> filteredStudents = studentService.filterStudents(studentFilterDto, pageable);
-        return ResponseEntity.ok(filteredStudents); // TODO: handle empty search
+        return ResponseEntity.ok(filteredStudents);
     }
 
     @PostMapping

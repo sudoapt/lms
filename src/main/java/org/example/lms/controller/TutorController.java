@@ -6,13 +6,17 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.TutorDto;
 import org.example.lms.service.TutorService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/tutor")
+@RequestMapping(path = "api/v1/tutors")
 @Tag(name = "Tutors", description = "Tutor management")
 public class TutorController {
     private final TutorService tutorService;
@@ -22,6 +26,17 @@ public class TutorController {
     public ResponseEntity<TutorDto> createTutor(@Valid @RequestBody TutorDto tutorDto) {
         TutorDto newTutor = tutorService.createTutor(tutorDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTutor);
+    }
+
+    @GetMapping
+    @Operation(summary = "Get all the tutors")
+    public ResponseEntity<Page<TutorDto>> getTutors(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<TutorDto> tutorDtoPage = tutorService.getTutors(pageable);
+        return ResponseEntity.ok(tutorDtoPage);
     }
 
     @PatchMapping("/{tutorId}")

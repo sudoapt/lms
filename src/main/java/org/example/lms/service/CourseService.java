@@ -26,8 +26,8 @@ public class CourseService {
         }
 
         Course course = courseMapper.toCourseEntity(courseDto);
-        Course newCourse = courseRepository.save(course); // SDJPA executes insert/update (IS THAT A MUST?)
-        return courseMapper.toCourseDto(newCourse);
+        courseRepository.save(course);
+        return courseMapper.toCourseDto(course);
     }
 
     @Transactional

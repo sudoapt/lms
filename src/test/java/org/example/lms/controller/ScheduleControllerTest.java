@@ -121,7 +121,7 @@ class ScheduleControllerTest extends AbstractIT {
                 LocalDate.of(2026, 11, 24));
 
         ResponseEntity<PagedResponse<ScheduleResponseDto>> response = restTemplate
-                .exchange("api/v1/schedule/schedules?page=0&size=2",
+                .exchange("api/v1/schedules?page=0&size=2",
                         HttpMethod.POST,
                         requestEntity(filterDto),
                         new ParameterizedTypeReference<>() {

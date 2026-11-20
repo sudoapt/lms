@@ -6,16 +6,31 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.GroupDto;
 import org.example.lms.service.GroupService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/group")
+@RequestMapping(path = "api/v1/groups")
 @Tag(name = "Groups", description = "Group management")
 public class GroupController {
     private final GroupService groupService;
+
+    @GetMapping
+    @Operation(summary = "Get all the groups")
+    public ResponseEntity<Page<GroupDto>> getCourse(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<GroupDto> groupDtos = groupService.getGroups(pageable);
+        return  ResponseEntity.ok(groupDtos);
+    }
 
     @PostMapping
     @Operation(summary = "Create a new group")

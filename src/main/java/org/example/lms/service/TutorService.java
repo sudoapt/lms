@@ -9,6 +9,8 @@ import org.example.lms.model.Course;
 import org.example.lms.model.Tutor;
 import org.example.lms.repository.CourseRepository;
 import org.example.lms.repository.TutorRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +29,12 @@ public class TutorService {
         return tutorMapper.toTutorDto(newTutor);
     }
 
-    // TODO: make schedule editing
+    @Transactional
+    public Page<TutorDto> getTutors(Pageable pageable){
+        Page<Tutor> tutorsPage = tutorRepository.findAll(pageable);
+        return tutorsPage.map(tutorMapper::toTutorDto);
+    }
+
     @Transactional
     public TutorDto editTutor(Long tutorId, TutorDto tutorDto) {
         Tutor tutor = tutorRepository.findById(tutorId)
