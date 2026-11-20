@@ -1,11 +1,17 @@
 package org.example.lms.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.lms.dto.GroupDto;
 import org.example.lms.exception.AlreadyExistsException;
+import org.example.lms.exception.GroupHasStudentException;
 import org.example.lms.mapper.GroupMapper;
+import org.example.lms.model.Course;
 import org.example.lms.model.Group;
+import org.example.lms.repository.CourseRepository;
 import org.example.lms.repository.GroupRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class GroupService {
     private final GroupRepository groupRepository;
+    private final CourseRepository courseRepository;
     private final GroupMapper groupMapper;
+
+    @Transactional
+    public Page<GroupDto> getGroups(Pageable pageable) {
+        Page<Group> groupsPage = groupRepository.findAll(pageable);
+        return groupsPage.map(groupMapper::toGroupDto);
+    }
 
     @Transactional
     public GroupDto createGroup(GroupDto groupDto) {
@@ -23,7 +36,42 @@ public class GroupService {
         }
 
         Group group = groupMapper.toGroupEntity(groupDto);
-        Group newGroup = groupRepository.save(group); // SDJPA executes insert/update
+        Group newGroup = groupRepository.save(group);
         return groupMapper.toGroupDto(newGroup);
+    }
+
+    @Transactional
+    public GroupDto editGroup(Long groupId, GroupDto groupDto) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
+
+        if (groupDto.groupName() != null) {
+            group.setGroupName(groupDto.groupName());
+        }
+
+        return groupMapper.toGroupDto(group);
+    }
+
+    @Transactional
+    public void deleteGroup(Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
+
+        if (group.getStudents() != null && !group.getStudents().isEmpty()) {
+            throw new GroupHasStudentException(groupId);
+        }
+
+        groupRepository.deleteById(groupId);
+    }
+
+    @Transactional
+    public void assignGroupOnCourse(Long groupId, Long courseId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("No group with the id: " + groupId + " found"));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("No course with the id: " + courseId + " found"));
+
+        course.getGroups().add(group);
+        group.getCourses().add(course);
     }
 }

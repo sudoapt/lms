@@ -9,5 +9,6 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface GroupMapper {
     GroupDto toGroupDto(Group group);
+
     Group toGroupEntity(GroupDto groupDto);
 }
